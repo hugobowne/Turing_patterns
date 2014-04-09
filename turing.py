@@ -12,7 +12,15 @@ import scipy.integrate
 import scipy.special
 import random
 
+import matplotlib
+from matplotlib import pyplot as plt
+from matplotlib import animation
+
+# This is a step-debugging library. Way useful.
 import pdb
+
+# This is a back-end that makes the code work for Mac OSX
+#matplotlib.use('TkAgg')
 
 # This is just to remove some annoying convergence warnings that can really crowd the environment
 warnings.filterwarnings('ignore', category=RuntimeWarning)
@@ -21,7 +29,7 @@ warnings.filterwarnings('ignore', category=RuntimeWarning)
 # t is time, y the state vector (corresponds to both Y_r and X_r in Turing's paper), and a the set of coefficients
 def dfdt(xs, t, a, b, c, d, mu, nu):
     
-    x = xs[1:len(xs)/2]
+    x = xs[:len(xs)/2]
     y = xs[len(xs)/2:]
 
     # The vector xs consists of X_r in the first half, and Y_r in the second
@@ -40,25 +48,47 @@ def dfdt(xs, t, a, b, c, d, mu, nu):
     return result
 
 # Number of cells in the ring system
-N = 20
-
-# Now we run the code for a selected bunch of parameters.
-# First try case a) from Section 8
-a = 3 
-b = 1
-c = - 1
-d = a
-mu = 0.25
-nu = mu 
+N = 50
 
 # The initial conditions are perturbed just a little bit
 xs_0 = np.ones(2*N) + 0.1 * np.random.random(2*N)
 
-t = np.linspace(0., 10., 1000)
+# This currently animates the solution to (c) in Section 8. Blue line is X_r, green line is Y_r
+# Play with parameters to see other behaviour
+t = np.linspace(0., 10., 500)
+I = 0.5
+a = I-1 
+b = 1
+c = - 1
+d = I
+mu = 0.25
+nu = mu 
+
 
 xs = scipy.integrate.odeint(dfdt, xs_0, t, args = (a,b,c,d,mu,nu))
 
-print t
-print xs
+# First set up the figure, the axis, and the plot element we want to animate
+fig = plt.figure()
+ax = plt.axes(xlim=(0, 1), ylim=(-np.max(abs(xs)), np.max(abs(xs))))
+line1, = ax.plot([], [], lw=2)
+line2, = ax.plot([], [], lw=2)
 
+# initialization function: plot the background of each frame
+def init():
+    line1.set_data([], [])
+    line2.set_data([], [])
+    return line1, line2
 
+# animation function.  This is called sequentially
+def animate(i):
+    x = np.linspace(0, 1, N)
+    y1 = xs[i, :N]
+    y2 = xs[i, N:]
+    line1.set_data(x, y1)
+    line2.set_data(x, y2)
+    return line1, line2
+
+# call the animator.  blit=True means only re-draw the parts that have changed.
+anim = animation.FuncAnimation(fig, animate, init_func=init,
+                               frames=len(t), interval=1, blit=False)
+plt.show()
