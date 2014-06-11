@@ -62,8 +62,8 @@ N = 20
 xs_0 = np.ones(2*N) + 0.1 * np.random.random(2*N)
 
 
-n = 600 # number of time steps
-tt = 6 # total time of simulation
+n = 1200 # number of time steps
+tt = 12 # total time of simulation
 # This currently animates the solution to (c) in Section 8. Blue line is X_r, green line is Y_r
 # Play with parameters to see other behaviour
 t = np.linspace(0., tt, n)
@@ -72,8 +72,8 @@ a = I-1
 b = 1
 c = - 1
 d = I
-mu = 0.25
-nu = mu 
+mu = 1
+nu = 0 
 
 #integrate
 xs = scipy.integrate.odeint(dfdt, xs_0, t, args = (a,b,c,d,mu,nu))
@@ -81,6 +81,7 @@ xs = scipy.integrate.odeint(dfdt, xs_0, t, args = (a,b,c,d,mu,nu))
 #set up initial frame
 y1 = xs[1, :2*N]
 y2 = np.reshape(y1,(2,N))
+#quad = plt.pcolormesh(y2,vmin = np.min(xs), vmax = np.max(xs),shading='gouraud')
 quad = plt.pcolormesh(y2,vmin = np.min(xs), vmax = np.max(xs))
 plt.colorbar()
 
