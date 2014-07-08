@@ -26,6 +26,7 @@ class Site(object):
                 self.nbstate[i] += s.state[i]
     
     def update(self):
+        # Currently deprecated: this method isn't currently used
         self.state = scipy.integrate.odeint(dfdt, self.state, t, args = (self.nbstate,a,b,c,d,mu,nu))[1]
     
     def __str__(self):
@@ -67,6 +68,7 @@ class SiteCollection(object):
         self.nu_vec = [site.nu for site in self.Sites]
 
     def update(self):
+        # Currently deprecated: this method isn't currently used
         for s in self.Sites:
             s.getNeighbourStates()
         for s in self.Sites:
@@ -74,7 +76,9 @@ class SiteCollection(object):
     
     def solve(self):
         
-        # Stupidly odeint can only operate on functions that work with 1-D arrays, so we have to use the flattened vector of morphogens
+        # Stupidly odeint can only operate on functions that work with 1-D arrays, so we have to use the flattened vector of site states.
+        # The .transpose() function is used as the array comes out as a 2xN array, where as we want Nx2 for the flatten routine to have
+        # the first state variable for the first half of the vector, and second for the second half.
         states = np.array([site.state for site in self.Sites]).transpose().flatten()
         self.build_param_vectors()
         
@@ -85,12 +89,12 @@ class SiteCollection(object):
     def ensemble_dfdt(self, states, t):
         dfdt = np.zeros(len(states))
 
-        # Stupidly odeint can only operate on functions that work with 1-D arrays, so we have to use the flattened vector of morphogens
-        morph_1 = states[:len(self.Sites)]
-        morph_2 = states[len(self.Sites):]
+        # Stupidly odeint can only operate on functions that work with 1-D arrays, so we have to use the flattened vector of site states 
+        state_1 = states[:len(self.Sites)]
+        state_2 = states[len(self.Sites):]
         
-        dfdt[:len(self.Sites)] = self.a_vec * morph_1 + self.b_vec * morph_2 + self.mu_vec * (np.dot(self.adjacency, morph_1) - self.adjacency.sum(1) * morph_1)
-        dfdt[len(self.Sites):] = self.c_vec * morph_1 + self.d_vec * morph_2 + self.nu_vec * (np.dot(self.adjacency, morph_2) - self.adjacency.sum(1) * morph_2)
+        dfdt[:len(self.Sites)] = self.a_vec * state_1 + self.b_vec * state_2 + self.mu_vec * (np.dot(self.adjacency, state_1) - self.adjacency.sum(1) * state_1)
+        dfdt[len(self.Sites):] = self.c_vec * state_1 + self.d_vec * state_2 + self.nu_vec * (np.dot(self.adjacency, state_2) - self.adjacency.sum(1) * state_2)
         
         return dfdt
             
