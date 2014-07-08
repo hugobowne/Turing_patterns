@@ -78,7 +78,6 @@ class SiteCollection(object):
         states = np.array([site.state for site in self.Sites]).transpose().flatten()
         self.build_param_vectors()
         
-        pdb.set_trace() 
         self.solution = scipy.integrate.odeint(self.ensemble_dfdt, states, self.t)        
         
         return self.solution
