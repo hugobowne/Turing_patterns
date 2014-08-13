@@ -83,7 +83,11 @@ class SiteCollection(object):
         self.build_param_vectors()
         
         self.solution = scipy.integrate.odeint(self.ensemble_dfdt, states, self.t)        
-        
+       
+        for i in range(len(self.Sites)):
+            # update the state information for each site, that is return it from the flattened solution vector
+            self.Sites[i].state = np.array([self.solution[:,i], self.solution[:,i + len(self.Sites)]])
+
         return self.solution
          
     def ensemble_dfdt(self, states, t):

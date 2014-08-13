@@ -13,16 +13,32 @@ import random
 
 #from pandas import *
 from pylab import *
-
+import matplotlib.pyplot as plt
 from reaction_diffusion import *
 
 #%matplotlib inline
 #%pylab inline
 
-## Define a collection of 20 Sites such that they form an icosahedron (brute-force method!)
+a=0.5
+b=1.
+c=-1.
+d=0.5
+mu=0.25
+nu=0.25
 
+I = 0.3
+a=I-1.
+b=1.
+c=-b
+d=I
+mu=1.
+nu=0
+
+## Define a collection of 20 Sites such that they form an icosahedron (brute-force method!)
 #define the Sites
-L = [Site(i,[random(),random()]) for i in range(0,20)]
+L = [Site(i,[random(),random()], a, b, c, d, mu, nu) for i in range(0,20)]
+
+T = 1.
 
 #defien the neighbours according to an icosahedral net i will include in an accompanying .tex
 L[0].setNeighbours([L[1],L[16],L[4]])
@@ -47,7 +63,14 @@ L[18].setNeighbours([L[19],L[17],L[1]])
 L[19].setNeighbours([L[18],L[13],L[15]])
 
 # For now I'm ignoring the subsite business, just going to test this one on 
-collection = SiteCollection(L)
+collection = SiteCollection(L, np.linspace(0., T, 101))
 soln = collection.solve()
 
-print soln
+plt.subplot(1,2,1)
+for site in collection.Sites:
+    plt.plot(collection.t, site.state[0], collection.t, site.state[1])
+
+plt.subplot(1,2,2)
+plt.plot(range(len(collection.Sites)), soln[-1,:len(collection.Sites)])
+
+plt.show()
