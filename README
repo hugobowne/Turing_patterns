@@ -1,1 +1,15 @@
-here we are in the very initial stages of developing code to simulate some Turing-type mechanisms.
+Turing Patterns
+---------------
+
+Some python code to investigate some Turing-type mechanisms, now with OpenFrameworks visualisations.
+
+Dependencies
+------------
+
+OpenFrameworks app is located in the of_icos/ directory. This project needs to linked to a copy of the OpenFrameworks library,
+at present the link directory (which is set in the config.make file) is set to /Users/james/src/of/. Evidently this needs to be changed for your particular build. One day we should sort out a better oF build system. All this only applies to building with gcc, I haven't touched the xcode project.
+
+I'm also working on including integration between Python and C++ via the saved NumPy array files, using the following repository, which needs to be installed:
+https://github.com/rogersce/cnpy
+
+Evidently we might want to look at integrating these things better down the track, perhaps we could implement the Turing system in C++, calling say 3rd party Matlab ODE solvers in place of the SciPy ones.
