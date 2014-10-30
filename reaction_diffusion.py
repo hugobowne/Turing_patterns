@@ -39,13 +39,17 @@ class SubSite(Site):
         self.loc = location
         self.parent = parent
 
+# TODO:
+# - Write constructor Using Adjacency matrix
+# - Write script to do 1d ring and the torus using this object
+# - One day: do icosahedron in OpenFrameworks  
+
 class SiteCollection(object):
     """ define class SiteCollection (yes, a colelction of Sites, good). """
-    def __init__(self,sites, soln_times=np.linspace(0.0,1.0,101)):
+    def __init__(self, sites):
         self.Sites = sites
         self.build_adjacency_matrix()
         print self.adjacency
-        self.t = soln_times
 
     def build_adjacency_matrix(self):
         """ Takes the sites collection and builds an adjacency matrix """
@@ -74,7 +78,7 @@ class SiteCollection(object):
         for s in self.Sites:
             s.update()
     
-    def solve(self):
+    def solve(self, soln_t):
         
         # Stupidly odeint can only operate on functions that work with 1-D arrays, so we have to use the flattened vector of site states.
         # The .transpose() function is used as the array comes out as a 2xN array, where as we want Nx2 for the flatten routine to have
@@ -82,12 +86,16 @@ class SiteCollection(object):
         states = np.array([site.state for site in self.Sites]).transpose().flatten()
         self.build_param_vectors()
         
-        self.solution = scipy.integrate.odeint(self.ensemble_dfdt, states, self.t)        
-       
+        self.solution = scipy.integrate.odeint(self.ensemble_dfdt, states, soln_t)
+        
         for i in range(len(self.Sites)):
             # update the state information for each site, that is return it from the flattened solution vector
             self.Sites[i].state = np.array([self.solution[:,i], self.solution[:,i + len(self.Sites)]])
-
+       
+        # The solution is now a num_t x 2*len(Sites) array, where num_t is the length of sol_t, so 
+        # we rearrange the solution but in a 2 * num_t * len(Sites) sized triple array
+        self.solution = np.array([self.solution[:, :len(self.Sites)], self.solution[:,len(self.Sites):]])
+        
         return self.solution
          
     def ensemble_dfdt(self, states, t):
