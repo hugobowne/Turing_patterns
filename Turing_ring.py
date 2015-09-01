@@ -18,12 +18,12 @@ from reaction_diffusion import *
 #%matplotlib inline
 #%pylab inline
 
-a=0.5
-b=1.
-c=-1.
-d=0.5
-mu=0.25
-nu=0.25
+a=-2
+b=2.5
+c=-1.25
+d=1.5
+mu=4
+nu=2
 
 #I=0.3
 #a=I-1.
@@ -86,4 +86,4 @@ print "Saving animation to", file_name
 ## UNCOMMENT THIS IF YOU WANT THE ANIMATION TO BE SAVED!
 #anim.save(file_name, fps=24)
 plt.show()
-
+print 'what!'

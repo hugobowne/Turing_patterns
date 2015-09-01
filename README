@@ -1,7 +1,7 @@
 Turing Patterns
 ---------------
 
-Some python code to investigate some Turing-type mechanisms, now with OpenFrameworks visualisations.
+Some python code to investigate some Turing-type mechanisms, now with OpenFrameworks visualisations: try running Turing_ring.py and/or image_reaction_diffusion.py. Coming soon: cleaning up the rest of this repository!
 
 Dependencies
 ------------
